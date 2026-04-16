@@ -13,7 +13,8 @@ class EnsureIsAdmin
      *
      * @param  Closure(Request): (Response)  $next
      * 
-     *  check if the specific rolem if it doesn't match abort.
+     *  Check if the logged in user is admin
+     *     if not, abort 
      */
     public function handle(Request $request, Closure $next,): Response
     {

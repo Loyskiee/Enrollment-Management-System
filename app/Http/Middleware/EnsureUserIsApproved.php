@@ -14,6 +14,9 @@ class EnsureUserIsApproved
      * Handle an incoming request.
      *
      * @param  Closure(Request): (Response)  $next
+     *  
+     * Check if the logged in user is approved
+     *  if not, logout and redirect to login with error message
      */
     public function handle(Request $request, Closure $next): Response
     {
