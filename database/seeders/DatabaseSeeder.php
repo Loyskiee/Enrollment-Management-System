@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
+use Database\Seeders\RequirementSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -18,6 +18,17 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'status' => 'approved'
         ]);
+
+        User::create([
+            'name' => 'Angel',
+            'email' => 'angel@example.com',
+            'role' => 'admin',
+            'status' => 'approved',
+            'password' => bcrypt('password') 
+    ]);
+
+        $this->call([RequirementSeeder::class]);
     }
 }

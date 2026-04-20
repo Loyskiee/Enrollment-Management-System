@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('student_requirements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->index();
+            $table->foreignId('user_id')->index();
             $table->foreignId('requirement_id')->index();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'submitted', 'approved', 'rejected'])->default('pending');
             $table->string('file_path')->nullable();
             $table->boolean('is_onsite');
             $table->timestamps();

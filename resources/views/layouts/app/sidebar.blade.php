@@ -12,7 +12,7 @@
                     <x-app-logo :sidebar="true" href="{{ route('student.dashboard') }}" wire:navigate />
                 @endif
                 <flux:sidebar.collapse class="lg:hidden" />
-            </flux:sidebar.header>I 
+            </flux:sidebar.header>
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">

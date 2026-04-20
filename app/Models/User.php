@@ -12,6 +12,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Models\StudentRequirement;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['name', 'email', 'password', 'role', 'status'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -45,13 +47,23 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function studentRequirements(): HasMany
+    /**
+     * A student has many requirements 
+     *  (inverse relationship with requirement)
+     * 
+     * The student_requirement is a pivot 
+     *  since student_requirements needs a user id and requirement id
+     */
+    public function requirements():BelongsToMany
     {
-        return $this->hasMany(StudentRequirements::class);
+        return $this->belongsToMany(Requirement::class, 'student_requirements', 'user_id', 'requirement_id')
+        ->withPivot(['file_path', 'status', 'is_onsite'])
+        ->withTimestamps();
     }
 
+    // A student can enroll to a many semeter
     public function enrollments(): HasMany
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Enrollment::class, 'user_id');
     }
 }

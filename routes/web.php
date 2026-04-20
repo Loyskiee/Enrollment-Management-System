@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Student\RequirementList;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -23,6 +24,7 @@ Route::middleware(['auth', 'approved', 'student'])
     ->name('student.')
     ->group(function () {
         Route::view('/dashboard', 'student.dashboard')->name('dashboard');
+        Route::get('/requirements', RequirementList::class);
     });
 
 // Admin Related Routes
@@ -32,5 +34,7 @@ Route::middleware(['auth', 'approved', 'admin'])
     ->group(function () {
         Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
     });
+
+
 
 require __DIR__.'/settings.php';
