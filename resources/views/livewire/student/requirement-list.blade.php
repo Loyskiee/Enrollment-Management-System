@@ -22,39 +22,27 @@
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ $requirement->description }}</p>
                 </div>
                 
+                {{-- status for a specific requirement --}}
                 <div class="flex items-center gap-4">
-                    {{-- Dynamically change the status based on the submission --}}
                     @if($status === 'submitted')
-                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                            Submitted
-                        </span>
+                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">Submitted</span>
                     @elseif($status === 'approved')
-                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                            Complete
-                        </span>
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Complete</span>
                     @elseif($status === 'rejected')
-                        <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                            Rejected
-                        </span>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Rejected</span>
+                            
+                            {{-- Fetch and show the Registrar's comment if it exists --}}
+                            @php $sub = Auth::user()->requirements->where('id', $requirement->id)->first(); @endphp
+                            @if($sub && $sub->pivot->admin_comment)
+                                <span class="text-[10px] text-red-500 italic max-w-[200px] text-right">
+                                    Reason: {{ $sub->pivot->admin_comment }}
+                                </span>
+                            @endif
+                        </div>
                     @else
-                        <span class="px-2 py-1 text-xs rounded-full bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
-                            Missing
-                        </span>
+                        <span class="px-2 py-1 text-xs rounded-full bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">Missing</span>
                     @endif
-
-                    <input type="file" wire:model="file" class="text-sm cursor-pointer">
-
-                    <div wire:loading wire:target="file" class="text-xs text-blue-500">
-                        Uploading
-                    </div>
-
-                    <button wire:click="uploadRequirements({{ $requirement->id }})">
-                        Upload
-                    </button>    
-                    @error("file" )
-                    <span class="text-red-500 text-xs block">
-                        {{ $message }} </span>
-                @enderror
                 </div>
             </div>
         @endforeach
