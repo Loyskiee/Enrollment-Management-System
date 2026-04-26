@@ -15,18 +15,28 @@ class EnsureUserIsApproved
      *
      * @param  Closure(Request): (Response)  $next
      *  
-     * Check if the logged in user is approved
-     *  if not, logout and redirect to login with error message
+     * Check if the user the user, admin, and approved
+     *  redirect to dashboard (logic is in routes)
+     *  if not, redirect to login with error message.
      */
     public function handle(Request $request, Closure $next): Response
     {
+        /**
+         * Auth::check() - Verifies is the user is already authenticated. Doesn't required credentials.
+         * Auth::attempt() - User tries to login. Requires credentials.
+         */
         
-        if(Auth::check() && Auth::user()->status !== 'approved') {
+        if ( Auth::check() &&
+            Auth::user()->role !== 'admin' &&
+            Auth::user()->status !== 'approved'
+            ) {
             Auth::logout();
 
-            return redirect('/login')->with('error', 'Your account is not approved yet.');
+            return redirect()
+                ->route('login')
+                ->with('status', 'Your account is pending approval by the registrar.');
         }
-        
+    
         return $next($request);
     }
 }

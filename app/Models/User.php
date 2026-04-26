@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use App\Models\StudentRequirement;
+use App\Models\Semester;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['name', 'email', 'password', 'role', 'status'])]
@@ -57,7 +57,7 @@ class User extends Authenticatable
     public function requirements():BelongsToMany
     {
         return $this->belongsToMany(Requirement::class, 'student_requirements', 'user_id', 'requirement_id')
-        ->withPivot(['file_path', 'status', 'is_onsite'])
+        ->withPivot(['file_path', 'status', 'is_onsite', 'admin_comment'])
         ->withTimestamps();
     }
 
@@ -65,5 +65,56 @@ class User extends Authenticatable
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'user_id');
+    }
+
+   
+    public function isApproved():bool
+    {
+        // This counts all of the requirements 
+        $totalRequirements = Requirement::count();
+
+        // Looks for approved status in the requirements
+        $approvedCount = $this->requirements()
+        ->wherePivot('status', 'approved')->count();
+
+        return $approvedCount === $totalRequirements;
+    }
+
+    /**
+     * Method used to enroll a student
+     */
+    public function enroll()
+    {
+        // Finds active semester
+        $activeSemester = Semester::where('is_active', true)
+        ->first();
+
+        // Logs an error that they forgot to set an active semester
+        if(!$activeSemester) {
+            return false;
+        }
+
+        // Create or update the enrollment record
+        return $this->enrollments()->updateOrCreate(
+            ['semester_id' => $activeSemester->id], 
+            ['status' => 'approved']
+        );
+    }
+
+    /**
+     * Method used to check if the student has an approved
+     *  enrollment for  the current active semester.
+     */
+    public function isEnrolled():bool
+    {
+        
+        $activeSemester = Semester::where('is_active', true)->first();
+
+        if (!$activeSemester) {
+            return false;
+        }
+         
+        return $this->enrollments()->where('semester_id', $activeSemester->id)
+        ->where('status', 'approved')->exists();
     }
 }

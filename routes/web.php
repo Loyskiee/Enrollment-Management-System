@@ -1,6 +1,9 @@
 <?php
 
+use App\Livewire\Admin\RequirementVerification;
+use App\Livewire\Admin\StudentSubmissions;
 use App\Livewire\Student\RequirementList;
+use App\Models\Semester;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -25,7 +28,18 @@ Route::middleware(['auth', 'approved', 'student'])
     ->group(function () {
         Route::view('/dashboard', 'student.dashboard')->name('dashboard');
         Route::get('/requirements', RequirementList::class);
-    });
+    Route::get('/coe', function () {
+        // SECURITY: Ensure they are actually enrolled before showing the certificate
+        if (!auth()->user()->isEnrolled()) {
+            abort(403, 'You must be fully enrolled to access the COE.');
+        }
+        return view('student.coe', [
+            'student' => auth()->user(),
+            'semester' => Semester::where('is_active', true)->first()
+        ]);
+    })->name('coe.download');
+
+        });
 
 // Admin Related Routes
 Route::middleware(['auth', 'approved', 'admin'])
@@ -33,6 +47,8 @@ Route::middleware(['auth', 'approved', 'admin'])
     ->name('admin.')
     ->group(function () {
         Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+        Route::get('/submissions', StudentSubmissions::class)->name('submissions');
+        Route::get('/verify/{user}', RequirementVerification::class)->name('verify');
     });
 
 

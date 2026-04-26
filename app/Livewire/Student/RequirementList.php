@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Livewire\Student;
+use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Requirement;
 use App\Models\StudentRequirement;
+
 
 /**
  * Requirements:
@@ -19,46 +21,46 @@ class RequirementList extends Component
 {
     use WithFileUploads;
 
-    /**
-     * 
-     */
-    public $file; 
+    #[Validate(['files.*' => 'nullable|file|mimes:pdf,jpg,png|max:5120'])] // This validates the incoming files.
+    public $files = []; 
                             
-
-    public function uploadRequirements($requirementId)
+    public function uploadRequirements()
     {
-        /**
-         * This validates the file 
-         *  mimes is a validation rule that ensure upload files must match
-         *      specific allow MIME types by inspecting the file content.
-         */
-        $this->validate([
-            'file' => 'required|file|mimes:pdf,jpg,png|max:5120',
-        ]);
-
-        /**
-         * $path refers to the files array variable that contatins the requirements.
-         *   the validated files goes to storage/app/puublic/requirements directory.
-         * 
-         */
-        $path = $this->file->store('requirements', 'public'); // the requirement file is stored inside the public directory
-
+        // Validation runs automatically because of the #[Validate] attribute.
        
-        StudentRequirement::updateOrCreate(
-            [
-                'user_id' => Auth::id(), //authenticated user
-                'requirement_id' => $requirementId, //requirements 
-            ], 
-            [
-                'file_path' => $path,
-                'status' => 'submitted',
-                'is_onsite' => false,
-            ]
-        );
-        
-        $this->reset('file');// This resets the file and ready it for the next upload
-        session()->flash('message', 'Requirement submitted successfuly!');
+        /**
+         * Checks if the files empty, if empty throws an error
+         * 
+         * The $this->files is the key name, and the $requirementId is the key value
+         * 
+         * $path defines where the file is stored which is in 'requirements public'  
+         */
+        if (empty($this->files)) {
+            $this->addError('files', 'Please select at least one file before saving.');
+            return;
+        }
+        foreach ($this->files as $requirementId => $file) {
+            if ($file) {
+                $path = $file->store('requirements', 'public');
+                StudentRequirement::updateOrCreate(
+                [
+                    'user_id' => Auth::id(), 
+                    'requirement_id' => $requirementId
+                ],
+                    
+                [
+                    'file_path' => $path, 
+                    'status' => 'submitted', 
+                    'is_onsite' => false,
+                    'admin_comment' => null
+                ]
+                );
+            }
+        }
+        $this->reset('files');
+        session()->flash('message', 'Submissions saved successfully!');
     }
+
 
     /**
      * This method renders(shows) the requirements and submission

@@ -44,11 +44,24 @@ class RequirementVerification extends Component
             'admin_comment' => $comment
         ]);
 
+        $this->user->refresh();
+
        unset($this->notes[$requirementId]); // once it updates, the comments of admin got cleaned.
 
        $this->message = 'Requirement marked as ' . ucfirst($status);
 
        $this->dispatch('clear-message');
+
+       $this->enrollStudent();
+    }
+
+    public function enrollStudent()
+    {
+        if($this->user->isApproved()) {
+            $this->user->enroll();
+            $this->message = "All requirements approved. Student is now officially Enrolled! ";
+            $this->dispatch('clear-enrollment-message');
+        }
     }
 
     public function render()

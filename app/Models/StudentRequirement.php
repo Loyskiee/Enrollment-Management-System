@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'requirement_id', 'status', 'file_path', 'is_onsite'])]
+#[Fillable(['user_id', 'requirement_id', 'status', 'admin_comment', 'file_path' ,'is_onsite'])]
 class StudentRequirement extends Model
 {
     /** @use HasFactory<StudentRequirementFactory> */

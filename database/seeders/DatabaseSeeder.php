@@ -27,7 +27,17 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
             'status' => 'approved',
             'password' => bcrypt('password') 
-    ]);
+        ]);
+
+        User::create([
+            'name' => 'Sean Carlo',
+            'email' => 'seancarlo@example.com',
+            'role' => 'student',
+            'status' => 'approved',
+            'password' => bcrypt('password') 
+        ]);
+
+
 
         $this->call([RequirementSeeder::class]);
     }

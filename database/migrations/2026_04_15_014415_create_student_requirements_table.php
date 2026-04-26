@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->index();
             $table->foreignId('requirement_id')->index();
             $table->enum('status', ['pending', 'submitted', 'approved', 'rejected'])->default('pending');
+            $table->text('admin_comment')->nullable();
             $table->string('file_path')->nullable();
             $table->boolean('is_onsite');
             $table->timestamps();
