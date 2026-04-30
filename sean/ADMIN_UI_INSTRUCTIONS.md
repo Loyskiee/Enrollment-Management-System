@@ -1,0 +1,7 @@
+- Minimal UI (no clutter)
+- Fast actions (approve/reject in 1 click)
+- Clear Feedback (status updates instantly)
+- Friendly labels (not technical)
+- Show important information only.
+- Avoid unnecessary animations.
+- Generate code in chat ONLY. No file edits.
