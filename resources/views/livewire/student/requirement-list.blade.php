@@ -21,7 +21,7 @@
     <div class="grid gap-4">
         @foreach($requirements as $requirement)
             @php
-                $status = $studentSubmissions[$requirement->id] ?? 'missing';
+                $status = $studentSubmissions[$requirement->id] ?? 'incomplete';
                 // Find the submission to check for admin comments
                 $sub = Auth::user()->requirements->where('id', $requirement->id)->first();
             @endphp
@@ -35,14 +35,16 @@
                         <h3 class="font-bold dark:text-white">{{ $requirement->name }}</h3>
                         
                         {{-- Status Badges --}}
-                        @if($status === 'submitted')
-                            <span class="px-2 py-0.5 text-[10px] rounded-full bg-yellow-100 text-yellow-700">Submitted</span>
+                        @if($status === 'approved')
+                            <span class="px-2 py-0.5 text-[10px] rounded-full bg-green-100 text-green-700">Approved</span> 
+                        @elseif($status === 'submitted')
+                        <span class="px-2 py-0.5 text-[10px] rounded-full bg-green-100 text-green-700">Subbmitted</span>
                         @elseif($status === 'approved')
                             <span class="px-2 py-0.5 text-[10px] rounded-full bg-green-100 text-green-700">Complete</span>
                         @elseif($status === 'rejected')
                             <span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700">Rejected</span>
                         @else
-                            <span class="px-2 py-0.5 text-[10px] rounded-full bg-neutral-100 text-neutral-500">Missing</span>
+                            <span class="px-2 py-0.5 text-[10px] rounded-full bg-neutral-100 text-neutral-500">Incomplete</span>
                         @endif
                     </div>
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ $requirement->description }}</p>

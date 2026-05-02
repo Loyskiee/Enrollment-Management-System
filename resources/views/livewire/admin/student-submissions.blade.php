@@ -11,7 +11,7 @@
                 </tr>
             </thead>
                 <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
-                    @foreach ($students as $student )
+                    @forelse ($students as $student )
                         <tr>
                             <td class="px-6 py-4 dark:text-white font-medium">{{$student->name}}</td>
                             <td class="px-6 py-4 text-center">
@@ -28,7 +28,13 @@
                                 <a href="{{ route('admin.verify', $student->id) }}"  class="text-blue-600 hover:underline">Review Files</a>
                             </td>
                         </tr>    
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-10 text-center text-neutral-500 dark:text-neutral-400 italic">
+                                No Requirement pass
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
         </table>
     </div>

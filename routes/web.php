@@ -2,8 +2,11 @@
 
 use App\Livewire\Admin\RequirementVerification;
 use App\Livewire\Admin\StudentSubmissions;
-use App\Livewire\Student\RequirementList;
+use App\Livewire\Admin\StudentList;
 use App\Models\Semester;
+use App\Models\User;
+use App\Models\Enrollment;
+use App\Models\StudentRequirement;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -27,7 +30,6 @@ Route::middleware(['auth', 'approved', 'student'])
     ->name('student.')
     ->group(function () {
         Route::view('/dashboard', 'student.dashboard')->name('dashboard');
-        Route::get('/requirements', RequirementList::class);
     Route::get('/coe', function () {
         // SECURITY: Ensure they are actually enrolled before showing the certificate
         if (!auth()->user()->isEnrolled()) {
@@ -46,7 +48,19 @@ Route::middleware(['auth', 'approved', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard', [
+                'pendingStudents' => User::where('status', 'pending')->count(),
+                'totalEnrolled' => Enrollment::where('status', 'approved')->count(),
+                'pendingRequirements' => StudentRequirement::where('status', 'pending')->count(),
+                'recentEnrollments' => Enrollment::with('user')
+                    ->where('status', 'approved')
+                    ->latest()
+                    ->take(10)
+                    ->get(),
+            ]);
+        })->name('dashboard');
+        Route::get('/students', StudentList::class)->name('students');
         Route::get('/submissions', StudentSubmissions::class)->name('submissions');
         Route::get('/verify/{user}', RequirementVerification::class)->name('verify');
     });

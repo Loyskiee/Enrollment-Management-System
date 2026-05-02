@@ -12,7 +12,7 @@ use App\Models\User;
 class StudentSubmissions extends Component
 {
     /**
-     * Get all the students and count specific submissions
+     * Get all the approved students
      * 
      * Fetching the total numbers of requirements in the system
      * 
@@ -20,6 +20,7 @@ class StudentSubmissions extends Component
     public function render()
     {
         $students = User::where('role', 'student')
+        ->where('status', 'approved')
         ->withCount('requirements')
         ->get();
 
