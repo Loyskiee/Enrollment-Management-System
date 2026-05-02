@@ -1,5 +1,5 @@
 - Minimal UI (no clutter)
-- Use Clear color status indicators Red for incomplete and rejected, Green for complete and approved.
+- Use Clear color status indicators Red for incomplete and rejected, Green for submitted, approved, and complete.
 - One main action per screen
 - Friendly labels (not technical)
 - Generate code in chat ONLY. No file edits.
