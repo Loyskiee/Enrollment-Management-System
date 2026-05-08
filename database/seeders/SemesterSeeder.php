@@ -12,15 +12,19 @@ class SemesterSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
-      $first_semester = Semester::create([
-        'name' => '1st Semester',
-        'is_active' => true,
-      ]);
+{
+    Semester::firstOrCreate(
+        ['name' => '1st Semester'],
+        [
+            'is_active' => true,
+        ]
+    );
 
-      $second_semester = Semester::create([
-        'name' => '2nd Semester',
-        'is_active' => false,
-      ]);
-    }
+    Semester::firstOrCreate(
+        ['name' => '2nd Semester'],
+        [
+            'is_active' => false,
+        ]
+    );
+}
 }

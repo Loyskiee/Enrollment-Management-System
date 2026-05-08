@@ -13,39 +13,41 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+{
+    User::firstOrCreate(
+        ['email' => 'test@example.com'],
+        [
             'name' => 'Test User',
-            'email' => 'test@example.com',
-            'status' => 'approved'
+            'status' => 'approved',
+            'password' => bcrypt('password'),
         ]);
 
-        User::create([
+    User::firstOrCreate(
+        ['email' => 'angel@example.com'],
+        [
             'name' => 'Angel',
-            'email' => 'angel@example.com',
             'role' => 'admin',
             'status' => 'approved',
-            'password' => bcrypt('password') 
+            'password' => bcrypt('password'),
         ]);
 
-        User::create([
+    User::firstOrCreate(
+        ['email' => 'seancarlo@example.com'],
+        [
             'name' => 'Sean Carlo',
-            'email' => 'seancarlo@example.com',
             'status' => 'approved',
-            'password' => bcrypt('password') 
+            'password' => bcrypt('password'),
         ]);
 
-        // This will be a super_admin soon
-        User::create([
+    // Soon magiging super admin
+    User::firstOrCreate(
+        ['email' => 'admin@example.com'],
+        [
             'name' => 'Main Admin',
-            'email' => 'admin@example.com',
             'role' => 'admin',
             'status' => 'approved',
-            'password' => bcrypt('password')
-         ]);
-
+            'password' => bcrypt('password'),
+        ]);
 
         $this->call([RequirementSeeder::class, SemesterSeeder::class]);
     }
