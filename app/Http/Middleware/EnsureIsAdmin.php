@@ -18,7 +18,7 @@ class EnsureIsAdmin
      */
     public function handle(Request $request, Closure $next,): Response
     {
-       if(request()->user()->role !== 'admin') {
+       if($request->user()->role !== 'admin') {
             abort(403, 'Unauthorized access.');
        }
         return $next($request);

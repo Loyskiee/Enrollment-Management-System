@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Enrollment;
 use App\Models\StudentRequirement;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::view('/', 'welcome')->name('home');
 
@@ -17,7 +18,7 @@ Route::view('/', 'welcome')->name('home');
  * Aborts with 403 if the role is unknown or unhandled.
  */
 Route::middleware(['auth', 'approved'])->get('/dashboard', function () {
-    return match(auth()->user()->role) {
+    return match(Auth::user()->role) {
         'admin'   => redirect()->route('admin.dashboard'),
         'student' => redirect()->route('student.dashboard'),
         default   => abort(403),
@@ -32,11 +33,11 @@ Route::middleware(['auth', 'approved', 'student'])
         Route::view('/dashboard', 'student.dashboard')->name('dashboard');
     Route::get('/coe', function () {
         // SECURITY: Ensure they are actually enrolled before showing the certificate
-        if (!auth()->user()->isEnrolled()) {
+        if (!Auth::user()->isEnrolled()) {
             abort(403, 'You must be fully enrolled to access the COE.');
         }
         return view('student.coe', [
-            'student' => auth()->user(),
+            'student' => Auth::user(),
             'semester' => Semester::where('is_active', true)->first()
         ]);
     })->name('coe.download');
