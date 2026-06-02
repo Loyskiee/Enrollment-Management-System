@@ -65,7 +65,7 @@
                         <div class="flex flex-col items-end">
                             <input type="file" 
                                 id="file-{{ $requirement->id }}"
-                                wire:model="files.{{ $requirement->id }}" 
+                                wire:model.live="files.{{ $requirement->id }}" 
                                 class="text-xs text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
                             >
                             @error('files.' . $requirement->id) 

@@ -9,6 +9,7 @@ class StudentList extends Component
 {
 
   public $filter = 'pending';
+  
   public function approve($userId)
     {
         User::where('id', $userId)
