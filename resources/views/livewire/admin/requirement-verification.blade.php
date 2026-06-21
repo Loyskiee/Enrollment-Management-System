@@ -25,7 +25,7 @@
                         {{ $submission->status === 'submitted' ? 'bg-yellow-100 text-yellow-700' : '' }}
                         {{ $submission->status === 'rejected' ? 'bg-red-100 text-red-700' : '' }}
                     ">
-                        {{ strtoupper($submission->status) }}
+                        {{ strtoupper($submission->status->value) }}
                     </span>
                 </div>
 

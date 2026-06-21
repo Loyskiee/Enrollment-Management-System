@@ -12,6 +12,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Enums\UserStatus;
+use App\Enums\UserRole;
 use App\Models\Semester;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -32,6 +34,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'status' => UserStatus::class
         ];
     }
 
@@ -47,74 +51,27 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    /**
-     * A student has many requirements 
-     *  (inverse relationship with requirement)
-     * 
-     * The student_requirement is a pivot 
-     *  since student_requirements needs a user id and requirement id
-     */
+    // A student have many requirements
     public function requirements():BelongsToMany
     {
-        return $this->belongsToMany(Requirement::class, 'student_requirements', 'user_id', 'requirement_id')
-        ->withPivot(['file_path', 'status', 'is_onsite', 'admin_comment'])
-        ->withTimestamps();
+       return $this->belongsToMany(Requirement::class, 'requirement_submissions')
+       ->withPivot(['status', 'admin_comment', 'file_path']);
     }
 
-    // A student can enroll to a many semeter
+    // A students can enroll to a semeter
     public function enrollments(): HasMany
     {
-        return $this->hasMany(Enrollment::class, 'user_id');
+        return $this->hasMany(Enrollment::class);
     }
 
-   
-    public function isApproved():bool
+    // A student have many requirement submissions
+    public function requirementSubmissions(): HasMany
     {
-        // This counts all of the requirements 
-        $totalRequirements = Requirement::count();
-
-        // Looks for approved status in the requirements
-        $approvedCount = $this->requirements()
-        ->wherePivot('status', 'approved')->count();
-
-        return $approvedCount === $totalRequirements;
+        return $this->hasMany(RequirementSubmission::class);
     }
 
-    /**
-     * Method used to enroll a student
-     */
-    public function enroll()
-    {
-        // Finds active semester
-        $activeSemester = Semester::where('is_active', true)
-        ->first();
-
-        // Logs an error that they forgot to set an active semester
-        if(!$activeSemester) {
-            return false;
-        }
-
-        // Create or update the enrollment record
-        return $this->enrollments()->updateOrCreate(
-            ['semester_id' => $activeSemester->id], 
-            ['status' => 'approved']
-        );
-    }
-
-    /**
-     * Method used to check if the student has an approved
-     *  enrollment for  the current active semester.
-     */
-    public function isEnrolled():bool
-    {
-        
-        $activeSemester = Semester::where('is_active', true)->first();
-
-        if (!$activeSemester) {
-            return false;
-        }
-         
-        return $this->enrollments()->where('semester_id', $activeSemester->id)
-        ->where('status', 'approved')->exists();
-    }
+  public function enroll()
+  {
+    
+  }
 }

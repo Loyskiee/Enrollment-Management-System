@@ -1,12 +1,13 @@
 <?php
-
 namespace App\Livewire\Student;
+
+use App\Enums\RequirementSubmissionStatus;
 use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Requirement;
-use App\Models\StudentRequirement;
+use App\Models\RequirementSubmission;
 
 
 /**
@@ -20,14 +21,21 @@ use App\Models\StudentRequirement;
 class RequirementList extends Component
 {
     use WithFileUploads;
-
-    #[Validate(['files.*' => 'nullable|file|mimes:pdf,jpg,png|max:5120'])] // This validates the incoming files.
-    public $files = []; 
-                            
+    
+    /**
+     * files must be an array with minimum of 1
+     *  Each item of the array must be pdf, jpg, or png.
+     */
+     #[Validate([
+        'files' => 'required|array|min:1',
+        'files.*' => 'nullable|file|mimes:pdf,jpg,png|max:5120'
+        ])] 
+    public $files = [];
+                           
+  
     public function uploadRequirements()
     {
-        // Validation runs automatically because of the #[Validate] attribute.
-       
+        $this->validate();
         /**
          * Checks if the files empty, if empty throws an error
          * 
@@ -35,28 +43,23 @@ class RequirementList extends Component
          * 
          * $path defines where the file is stored which is in 'requirements public'  
          */
-        if (empty($this->files)) {
-            $this->addError('files', 'Please select at least one file before saving.');
-            return;
-        }
-        foreach ($this->files as $requirementId => $file) {
-            if ($file) {
-                $path = $file->store('requirements', 'public');
-                StudentRequirement::updateOrCreate(
-                [
-                    'user_id' => Auth::id(), 
-                    'requirement_id' => $requirementId
-                ],
-                    
-                [
-                    'file_path' => $path, 
-                    'status' => 'submitted', 
-                    'is_onsite' => false,
-                    'admin_comment' => null
-                ]
-                );
-            }
-        }
+       foreach($this->files as $requirementId => $file) {
+            $path  = $file->store('requirements', 'public');
+
+               RequirementSubmission::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'requirement_id' => $requirementId
+            ],
+            [
+                'file_path' => $path,
+                'status' =>  RequirementSubmissionStatus::Submitted->value,
+                'is_onsite' => false,
+                'admin_comment' => null
+            ]
+       );
+
+       }
         $this->reset('files');
         session()->flash('message', 'Submissions saved successfully!');
     }

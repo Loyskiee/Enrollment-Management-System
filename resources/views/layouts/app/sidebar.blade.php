@@ -19,7 +19,7 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.group class="grid">
-                    @if (auth()->user()->role === 'admin')
+                    @if (auth()->user()->role === \App\Enums\UserRole::Admin)
                         <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
                             {{ __('Dashboard') }}
                         </flux:sidebar.item>

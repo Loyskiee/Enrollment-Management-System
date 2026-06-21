@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student_requirements', function (Blueprint $table) {
+        Schema::create('requirement_submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->index();
-            $table->foreignId('requirement_id')->index();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('requirement_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['submitted', 'incomplete', 'complete', 'approved', 'rejected'])->default('incomplete');
             $table->text('admin_comment')->nullable();
             $table->string('file_path')->nullable();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('student_requirements');
+        Schema::dropIfExists('requirement_submissions');
     }
 };

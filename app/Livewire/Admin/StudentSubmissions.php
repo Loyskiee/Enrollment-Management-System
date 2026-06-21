@@ -15,7 +15,6 @@ class StudentSubmissions extends Component
      * Get all the approved students
      * 
      * Fetching the total numbers of requirements in the system
-     * 
      */
     public function render()
     {

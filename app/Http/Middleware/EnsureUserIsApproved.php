@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +29,8 @@ class EnsureUserIsApproved
          */
         
         if ( Auth::check() &&
-            Auth::user()->role !== 'admin' &&
-            Auth::user()->status !== 'approved'
+            Auth::user()->role !== UserRole::Admin &&
+            Auth::user()->status !== UserStatus::Approved
             ) {
             Auth::logout();
 
