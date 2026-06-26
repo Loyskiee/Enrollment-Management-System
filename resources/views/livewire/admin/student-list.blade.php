@@ -40,12 +40,12 @@
                             <div class="text-xs text-neutral-500">{{ $student->email }}</div>
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            @if($student->status !== 'approved')
+                            @if($student->status !== \App\Enums\UserStatus::Approved)
                                 <button wire:click="approve({{ $student->id }})" class="inline-flex items-center px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg transition shadow-sm">
                                     Approve
                                 </button>
                             @endif
-                            @if($student->status !== 'rejected')
+                            @if($student->status !== \App\Enums\UserStatus::Rejected)
                                 <button wire:click="reject({{ $student->id }})" class="inline-flex items-center px-4 py-1.5 bg-red-500 dark:bg-red-600 border border-red-600 text-white text-xs font-bold rounded-lg transition hover:bg-red-600 dark:hover:bg-red-700">
                                     Reject
                                 </button>

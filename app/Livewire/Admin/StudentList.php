@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use Livewire\Component;
 
@@ -10,15 +11,21 @@ class StudentList extends Component
 
   public $filter = 'pending';
   
-  public function approve($userId)
-    {
-        User::where('id', $userId)
-         ->update(['status' => 'approved']);
-    }
+    public function approve($userId)
+        {
+            $user = User::find($userId);
+
+            if ($user->status === UserStatus::Approved) return;
+
+            $user->update(['status' => UserStatus::Approved]);
+        }
     public function reject($userId)
     {
-        User::where('id', $userId)
-         ->update(['status' => 'rejected']);
+        $user = User::find($userId);
+
+        if($user->status === UserStatus::Approved) return;
+
+        $user->update(['status' => UserStatus::Rejected]);
     }
     public function render()
     {

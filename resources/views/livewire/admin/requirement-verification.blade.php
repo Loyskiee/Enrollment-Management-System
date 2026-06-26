@@ -15,6 +15,13 @@
     @endif
 
     <div class="space-y-6">
+        @if ($submissions->isEmpty())
+            <div class="min-h-screen flex items-center justify-center">
+                <h1 class="text-red-500 text-lg font-medium text-center">
+                    No Requirements Passed.
+                </h1>
+            </div>
+        @else
         @foreach($submissions as $submission)
             <div wire:key="submission-{{ $submission->id }}"
               class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
@@ -85,5 +92,6 @@
                 </div> 
             </div> 
         @endforeach
+        @endif
     </div> 
 </div> 

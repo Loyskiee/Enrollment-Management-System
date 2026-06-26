@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Admin;
 
+
 use Livewire\Component;
+use App\Models\Semester;
 use App\Models\User;
-use App\Models\StudentRequirement;
+use App\Models\RequirementSubmission;
 
 /**
  * Accepts/Reject a students' requirements
@@ -57,11 +59,20 @@ class RequirementVerification extends Component
 
     public function enrollStudent()
     {
-        if($this->user->isApproved()) {
-            $this->user->enroll();
-            $this->message = "All requirements approved. Student is now officially Enrolled! ";
-            $this->dispatch('clear-enrollment-message');
-        }
+        $activeSemester = Semester::where('is_active', true)->first();
+
+        if(!$activeSemester) return;
+
+        $enrollment = $this->user->enrollments()
+        ->firstOrCreate(
+                ['semester_id' => $activeSemester->id,], 
+                ['status'=> 'pending']
+            );
+
+       if($enrollment->approved()) {
+            $enrollment->update(['status' => 'approved']);
+            $this->message = 'Student has been enrolled!';
+       }
     }
 
     public function render()
@@ -70,7 +81,7 @@ class RequirementVerification extends Component
          * This get the requirements and pivot table
          *  file_path and status
          */
-        $submissions = StudentRequirement::with('requirement')
+        $submissions = RequirementSubmission::with('requirement')
             ->where('user_id', $this->user->id)
             ->get();
     

@@ -15,6 +15,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\Enums\UserStatus;
 use App\Enums\UserRole;
 use App\Models\Semester;
+use App\Models\Requirement;
+use App\Models\RequirementSubmission;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['name', 'email', 'password', 'role', 'status'])]
@@ -70,8 +72,25 @@ class User extends Authenticatable
         return $this->hasMany(RequirementSubmission::class);
     }
 
-  public function enroll()
+
+  // This create a student's enrollment status
+  public function enroll(Semester $semester)
   {
-    
+    return $this->enrollments()->updateOrCreate(
+        ['semester_id' => $semester->id],
+        ['status' => 'pending']
+    );
+  }
+
+  /**
+   * Checks if the student's enrollment status if approved
+   *    then show the COE on dashboard.
+   */
+  public function isEnrolled(Semester $semester):bool
+  {
+    return $this->enrollments()
+    ->where('semester_id', $semester->id)
+    ->where('status','approved')
+    ->exists();
   }
 }

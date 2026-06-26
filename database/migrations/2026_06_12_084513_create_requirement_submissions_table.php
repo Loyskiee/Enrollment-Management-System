@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('requirement_id')->constrained()->cascadeOnDelete();
-            $table->enum('status', ['submitted', 'incomplete', 'complete', 'approved', 'rejected'])->default('incomplete');
-            $table->text('admin_comment')->nullable();
+            $table->enum('status', ['pending', 'submitted', 'approved', 'rejected'])->default('pending');           
+             $table->text('admin_comment')->nullable();
             $table->string('file_path')->nullable();
             $table->boolean('is_onsite');
             $table->timestamps();

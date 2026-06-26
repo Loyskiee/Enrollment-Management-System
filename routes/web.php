@@ -56,7 +56,7 @@ Route::middleware(['auth', 'approved', 'admin'])
             return view('admin.dashboard', [
                 'pendingStudents' => User::where('status', 'pending')->count(),
                 'totalEnrolled' => Enrollment::where('status', 'approved')->count(),
-                'pendingRequirements' => RequirementSubmission::where('status', 'pending')->count(),
+                'pendingRequirements' => RequirementSubmission::where('status', 'submitted')->count(),
                 'recentEnrollments' => Enrollment::with('user')
                     ->where('status', 'approved')
                     ->latest()
