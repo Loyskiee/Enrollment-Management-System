@@ -26,15 +26,17 @@ class RequirementList extends Component
      * files must be an array with minimum of 1
      *  Each item of the array must be pdf, jpg, or png.
      */
-     #[Validate([
-        'files' => 'required|array|min:1',
-        'files.*' => 'nullable|file|mimes:pdf,jpg,png|max:5120'
-        ])] 
+    #[Validate(['files.*' => 'file|mimes:pdf,jpg,png|max:5120'])]
     public $files = [];
                            
   
     public function uploadRequirements()
     {
+        if(empty($this->files)){
+            session()->flash('error', 'Please select at least one file.');
+            return;
+        }
+
         $this->validate();
         /**
          * Checks if the files empty, if empty throws an error
@@ -44,7 +46,7 @@ class RequirementList extends Component
          * $path defines where the file is stored which is in 'requirements public'  
          */
        foreach($this->files as $requirementId => $file) {
-            $path  = $file->store('requirements', 'public');
+            $path = $file->store('requirements', 'public');
 
                RequirementSubmission::updateOrCreate(
             [

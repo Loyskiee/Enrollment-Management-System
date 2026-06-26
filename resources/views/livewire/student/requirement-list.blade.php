@@ -1,5 +1,8 @@
 <div class="space-y-6">
-        {{-- @if(!Auth::user()->enrollments->status !== EnrollmentStatus::Approved) 
+    @php
+        $enrollment = Auth::user()->enrollments()->latest()->first();
+    @endphp
+        @if($enrollment && $enrollment->status === \App\Enums\EnrollmentStatus::Approved) 
         <div class="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex justify-between items-center">
             <div>
                 <h3 class="font-semibold text-green-700 dark:text-green-400">You are officially enrolled!</h3>
@@ -10,7 +13,7 @@
                 Download COE
             </a>
         </div>
-    @endif --}}
+    @endif 
  <div class="flex justify-between items-center">
         <h2 class="text-xl font-bold dark:text-white">Enrollment Requirements</h2>
         @if (session()->has('message'))
@@ -65,10 +68,10 @@
                         <div class="flex flex-col items-end">
                             <input type="file" 
                                 id="file-{{ $requirement->id }}"
-                                wire:model.live="files.{{ $requirement->id }}" 
+                                wire:model="files.{{ $requirement->id }}" 
                                 class="text-xs text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
                             >
-                            @error('files.' . $requirement->id) 
+                            @error('files.*' . $requirement->id) 
                                 <span class="text-[10px] text-red-500 mt-1">{{ $message }}</span> 
                             @enderror
                         </div>
