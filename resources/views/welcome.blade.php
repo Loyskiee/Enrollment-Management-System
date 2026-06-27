@@ -24,14 +24,14 @@
             @if (Route::has('login'))
                 <nav class="flex items-center justify-end gap-4">
                     @auth
-                        @if (auth()->user()->role === 'admin')
+                        @if (auth()->user()->role === \App\Enums\UserRole::Admin)
                             <a
                             href="{{ route('admin.dashboard') }}"
                             class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
                         >
                             Dashboard
                         </a>
-                        @elseif (auth()->user()->role === 'student')
+                        @elseif (auth()->user()->role === \App\Enums\UserRole::Student)
                             <a
                             href="{{ route('student.dashboard') }}"
                             class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
