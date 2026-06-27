@@ -35,10 +35,12 @@ Route::middleware(['auth', 'approved', 'student'])
     ->group(function () {
         Route::view('/dashboard', 'student.dashboard')->name('dashboard');
     Route::get('/coe', function () {
-        // SECURITY: Ensure they are actually enrolled before showing the certificate
-       if (!Auth::user()->enrollments->status !== EnrollmentStatus::Approved) {
-            abort(403, 'You must be fully enrolled to access the COE.');
-        }
+      $semester = Semester::where('is_active', true)->firstOrFail();
+      
+      // SECURITY: Ensure they are actually enrolled before showing the certificate
+      if (!Auth::user()->isEnrolled($semester)) {
+          abort(403, 'You must be fully enrolled to access the COE.');
+      }
         return view('student.coe', [
             'student' => Auth::user(),
             'semester' => Semester::where('is_active', true)->first()
